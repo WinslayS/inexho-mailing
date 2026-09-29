@@ -1,0 +1,12 @@
+{
+  "name": "inexho-mailing",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Local corporate housing mailing editor",
+  "scripts": {
+    "test": "node tests/editor.cjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.58.2"
+  }
+}
