@@ -54,6 +54,14 @@ const server = http.createServer((req, res) => {
     assert.equal(await page.locator(".property-card").count(), 6);
     assert.equal(await page.locator(".photo-card").count(), 3);
     assert.match(await page.locator(".app-brand").textContent(), /INEXHO Mailing list/);
+    assert.equal(await page.locator(".app-mark").getAttribute("src"), "assets/logo-blue.png");
+    assert.equal(await page.locator(".company-header .logo").getAttribute("src"), "assets/logo.png");
+    for (const selector of [".app-mark", ".company-header .logo"]) {
+      assert(await page.locator(selector).evaluate(async image => {
+        await image.decode();
+        return image.naturalWidth > 0 && image.naturalWidth === image.naturalHeight;
+      }), "Both logo variants must load with their original square proportions");
+    }
     assert.equal(await page.locator(".toolbar input[type=date]").count(), 0);
     assert.equal(await page.locator('[aria-label="List publication date"]').inputValue(), await page.evaluate(() => today()));
     assert.equal(await page.locator('[data-field="subtitle"]').textContent(), "Short & long stay accommodation");
