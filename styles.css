@@ -344,18 +344,14 @@ select:focus-visible,
   background: transparent;
   color: inherit;
   font-size: 10px;
-  appearance: textfield;
-  -moz-appearance: textfield;
+  appearance: auto;
+  -moz-appearance: auto;
 }
 .number-input:hover,
 .number-input:focus {
   border-color: #83bdcc;
 }
 .number-input::-webkit-inner-spin-button {
-  opacity: 0;
-}
-.number-input:focus::-webkit-inner-spin-button,
-.number-input:hover::-webkit-inner-spin-button {
   opacity: 1;
 }
 .number-print {
@@ -1210,15 +1206,9 @@ dialog p {
   }
 }
 .number-input {
-  width: calc(var(--digits, 1) * 1ch + 1px);
+  width: calc(var(--digits, 1) * 1ch + 18px);
   min-width: 1ch;
   font-variant-numeric: tabular-nums;
-}
-.number-input:hover,
-.number-input:focus {
-  appearance: auto;
-  -moz-appearance: auto;
-  width: calc(var(--digits, 1) * 1ch + 18px);
 }
 /* Keep upload controls above the card, clear of photo sort/remove handles. */
 .photo-controls {

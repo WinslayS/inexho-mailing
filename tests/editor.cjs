@@ -67,6 +67,20 @@ const server = http.createServer((req, res) => {
     assert.match(await page.locator(".summary").textContent(), /total capacity/);
     assert.doesNotMatch(await page.locator(".summary").textContent(), /maximum/);
     const numberField = page.locator('[data-field="bedrooms"]').first();
+    // Native number controls need room for their spinner even without hover/focus.
+    await page.mouse.move(0, 0);
+    await page.locator("#add").focus();
+    for (const [field, initial] of [["bedrooms", "4"], ["persons", "8"]]) {
+      const input = page.locator(`[data-field="${field}"]`).first();
+      for (const value of ["4", "12", "9999"]) {
+        await input.fill(value);
+        await input.blur();
+        await page.mouse.move(0, 0);
+        assert(await input.evaluate(e => e.clientWidth >= e.scrollWidth), "Number must not be clipped without hover/focus");
+      }
+      await input.fill(initial);
+      await input.blur();
+    }
     await numberField.focus();
     assert.equal(await numberField.evaluate(e => getComputedStyle(e).appearance), "auto");
     const singleDigitWidth = await numberField.evaluate(e => e.getBoundingClientRect().width);
@@ -82,6 +96,8 @@ const server = http.createServer((req, res) => {
     await numberField.press("ArrowDown");
     assert.equal(await numberField.inputValue(), "4");
     await numberField.blur();
+    await page.mouse.move(0, 0);
+    assert.equal(await numberField.evaluate(e => e.getBoundingClientRect().width), singleDigitWidth);
     assert.deepEqual(await page.locator(".company-section-title").allTextContents(), ["CONTACT", "ADDRESS"]);
     assert.deepEqual(await page.locator(".features > div").allTextContents(), ["Furnished", "Fully equipped kitchen", "Washing machine", "Wi-Fi", "Parking", "SNF standards"]);
     assert.equal(await page.locator(".fact .icon path").first().getAttribute("d"), await page.locator(".features .icon path").first().getAttribute("d"));
@@ -357,6 +373,8 @@ const server = http.createServer((req, res) => {
       );
     });
     await page.setViewportSize({ width: 390, height: 844 });
+    await page.mouse.move(0, 0);
+    assert(await page.locator(".number-input").evaluateAll(inputs => inputs.every(e => e.clientWidth >= e.scrollWidth)), "Mobile numbers must not be clipped without hover/focus");
     await page.screenshot({
       path: path.join(out, "mobile.png"),
       fullPage: true,
