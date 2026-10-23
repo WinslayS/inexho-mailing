@@ -236,6 +236,12 @@ function gallery(p) {
     return `<div class="gallery count-0">${badge(p)}<div class="placeholder editor-only">${icon("photo")}<span>Add up to 3 photos</span></div></div>`;
   return `<div class="gallery count-${p.photos.length}">${p.photos.map((photo, i) => `<div class="photo" data-photo-id="${photo.id}"><img src="${photoURL(photo)}" alt="${escapeHTML(p.city || "Property")} photo ${i + 1}" draggable="false">${i === 0 ? badge(p) : ""}<div class="photo-tools editor-only"><button class="photo-handle" data-drag="photo" aria-label="Move photo ${i + 1}; use arrow keys or drag" title="Drag to reorder · arrow keys"><svg viewBox="0 0 12 16" width="10" height="13" fill="currentColor" aria-hidden="true"><circle cx="3" cy="3" r="1.3"/><circle cx="9" cy="3" r="1.3"/><circle cx="3" cy="8" r="1.3"/><circle cx="9" cy="8" r="1.3"/><circle cx="3" cy="13" r="1.3"/><circle cx="9" cy="13" r="1.3"/></svg></button><span class="photo-count">${i === 0 ? "1 · Main" : i + 1}</span><button data-action="remove-photo" aria-label="Remove photo ${i + 1}">×</button></div></div>`).join("")}</div>`;
 }
+function numberSteps(field) {
+  return `<span class="number-steps editor-only">${[
+    [1, "Increase", "M2 5 5 2l3 3"],
+    [-1, "Decrease", "M2 3 5 6l3-3"],
+  ].map(([step, label, path]) => `<button type="button" class="number-step" data-number-step="${step}" aria-label="${label} ${field}"><svg viewBox="0 0 10 8" width="10" height="8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${path}"/></svg></button>`).join("")}</span>`;
+}
 function card(p, index) {
   const photo = index < 3,
     theme = photo ? "" : compactPattern[(index - 3) % compactPattern.length];
@@ -245,7 +251,7 @@ function card(p, index) {
   ]
     .map(
       ([name, f]) =>
-        `<div class="fact">${icon(name)}<span><input class="number-input" style="--digits:${String(p[f]).length}" type="number" min="0" max="9999" step="1" inputmode="numeric" data-field="${f}" aria-label="${f}" value="${p[f]}"><span class="number-print">${p[f]}</span> ${f}</span></div>`,
+        `<div class="fact">${icon(name)}<span><span class="number-control"><input class="number-input" style="--digits:${String(p[f]).length}" type="number" min="0" max="9999" step="1" inputmode="numeric" data-field="${f}" aria-label="${f}" value="${p[f]}"><span class="number-print">${p[f]}</span>${numberSteps(f)}</span> ${f}</span></div>`,
     )
     .join(
       "",
@@ -508,6 +514,13 @@ function showAvailability(cardElement, p) {
 $("#pages").addEventListener("click", async (event) => {
   const button = event.target.closest("button");
   if (!button) return;
+  if (button.dataset.numberStep) {
+    const input = $(".number-input", button.closest(".number-control"));
+    input.stepUp(Number(button.dataset.numberStep));
+    commitField(input, true);
+    input.focus({ preventScroll: true });
+    return;
+  }
   const cardElement = button.closest("[data-id]"),
     p = property(cardElement?.dataset.id);
   if (!p) return;

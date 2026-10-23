@@ -67,7 +67,7 @@ const server = http.createServer((req, res) => {
     assert.match(await page.locator(".summary").textContent(), /total capacity/);
     assert.doesNotMatch(await page.locator(".summary").textContent(), /maximum/);
     const numberField = page.locator('[data-field="bedrooms"]').first();
-    // Native number controls need room for their spinner even without hover/focus.
+    // Numbers and step controls remain visible without hover/focus.
     await page.mouse.move(0, 0);
     await page.locator("#add").focus();
     for (const [field, initial] of [["bedrooms", "4"], ["persons", "8"]]) {
@@ -80,9 +80,23 @@ const server = http.createServer((req, res) => {
       }
       await input.fill(initial);
       await input.blur();
+      const up = page.getByRole("button", { name: `Increase ${field}`, exact: true }).first();
+      const down = page.getByRole("button", { name: `Decrease ${field}`, exact: true }).first();
+      await up.click();
+      assert.equal(await input.inputValue(), String(Number(initial) + 1));
+      await down.click();
+      assert.equal(await input.inputValue(), initial);
+      await input.fill("9999");
+      await up.click();
+      assert.equal(await input.inputValue(), "9999");
+      await input.fill("0");
+      await down.click();
+      assert.equal(await input.inputValue(), "0");
+      await input.fill(initial);
+      await input.blur();
     }
     await numberField.focus();
-    assert.equal(await numberField.evaluate(e => getComputedStyle(e).appearance), "auto");
+    assert.equal(await numberField.evaluate(e => getComputedStyle(e).appearance), "textfield");
     const singleDigitWidth = await numberField.evaluate(e => e.getBoundingClientRect().width);
     await numberField.fill("12");
     const doubleDigitWidth = await numberField.evaluate(e => e.getBoundingClientRect().width);
@@ -225,6 +239,19 @@ const server = http.createServer((req, res) => {
     await page.reload();
     await saved();
     assert.equal(await page.locator(`[data-id="${initialID}"] img`).count(), 3);
+    for (const theme of ["light", "grey", "navy"]) {
+      const control = page.locator(`.compact-card.${theme} .number-control`).first();
+      const metrics = await control.evaluate(e => {
+        const button = e.querySelector(".number-step");
+        const style = getComputedStyle(button);
+        const b = button.getBoundingClientRect(), svg = button.querySelector("svg").getBoundingClientRect();
+        return { background: style.backgroundColor, border: style.borderWidth, color: style.color, inputColor: getComputedStyle(e.querySelector("input")).color, fits: svg.top >= b.top && svg.bottom <= b.bottom };
+      });
+      assert.equal(metrics.background, "rgba(0, 0, 0, 0)");
+      assert.equal(metrics.border, "0px");
+      assert.equal(metrics.color, metrics.inputColor);
+      assert(metrics.fits, "Stepper arrow must fit inside its button");
+    }
     // A pre-update document must retain all records, edits and image Blobs.
     const legacyProperties = await page.evaluate(async () => {
       state.properties[0].area = "Existing user region";
@@ -264,6 +291,7 @@ const server = http.createServer((req, res) => {
         }
       }
       if (document.querySelector(".logo").getBoundingClientRect().width !== 96 || document.querySelector(".company-logo").getBoundingClientRect().width !== 72) throw Error("Logo size or layout slot changed");
+      if ([...document.querySelectorAll(".number-steps")].some(e => getComputedStyle(e).display !== "none")) throw Error("Number step controls printed");
       const headerItems = [".company-logo", ".brand-lockup > div", ".company-contact", ".company-address"].map(box);
       for (let i = 1; i < headerItems.length; i++) if (headerItems[i].left < headerItems[i-1].right) throw Error("Header columns overlap");
       for (const card of document.querySelectorAll(".property-card")) {
