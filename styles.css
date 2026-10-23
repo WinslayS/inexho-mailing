@@ -97,15 +97,13 @@ select:focus-visible,
   color: #617b8a;
 }
 .app-mark {
-  display: grid;
-  place-items: center;
-  background: var(--navy);
-  color: var(--cyan);
+  display: block;
+  object-fit: contain;
+  flex-shrink: 0;
+  background: white;
   width: 33px;
   height: 33px;
   border-radius: 9px;
-  font-size: 27px;
-  font-weight: 700;
 }
 .toolbar-actions {
   display: flex;
@@ -190,7 +188,9 @@ select:focus-visible,
   width: 37px;
   height: 42px;
   flex-shrink: 0;
-  color: var(--cyan);
+  object-fit: contain;
+  background: white;
+  border-radius: 4px;
 }
 .company-header h1 {
   font-size: 19px;
