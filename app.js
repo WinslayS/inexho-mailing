@@ -19,21 +19,16 @@ const limits = {
   type: 32,
   area: 48,
   name: 60,
+  subtitle: 80,
   phone: 30,
   email: 80,
   street: 65,
   locality: 65,
 };
 const compactPattern = [
-  "light",
-  "navy",
-  "light",
-  "navy",
-  "light",
-  "light",
-  "light",
-  "light",
-  "navy",
+  "light", "grey", "navy",
+  "grey", "navy", "light",
+  "navy", "light", "grey",
 ];
 const mm = {
   content: 277,
@@ -76,20 +71,22 @@ function newProperty(
 function defaults() {
   return {
     version: 2,
+    listDate: today(),
     company: {
       name: "International Expats Houses",
+      subtitle: "Short & long stay accommodation",
       phone: "+31 6 1539 7067",
       email: "jhopman@inexho.com",
       street: "Diamantweg 68",
       locality: "Alkmaar, Netherlands",
     },
     properties: [
-      newProperty("Rotterdam", "Apartment", 4, 8, "City centre"),
-      newProperty("Vlaardingen", "House", 3, 5, "Quiet area"),
-      newProperty("Amsterdam", "Apartment", 2, 3, "Near station"),
-      newProperty("Haarlem", "House", 4, 6, "Residential area"),
-      newProperty("Zaandam", "Apartment", 3, 5, "Near station"),
-      newProperty("Alkmaar", "House", 3, 4, "City centre"),
+      newProperty("Rotterdam", "Apartment", 4, 8, "South Holland"),
+      newProperty("Vlaardingen", "House", 3, 5, "South Holland"),
+      newProperty("Amsterdam", "Apartment", 2, 3, "North Holland"),
+      newProperty("Haarlem", "House", 4, 6, "North Holland"),
+      newProperty("Zaandam", "Apartment", 3, 5, "North Holland"),
+      newProperty("Alkmaar", "House", 3, 4, "North Holland"),
     ],
   };
 }
@@ -191,18 +188,32 @@ async function flushSave() {
 function edit(field, value, extra = "") {
   return `contenteditable="plaintext-only" role="textbox" spellcheck="false" data-field="${field}" aria-label="${field}" data-placeholder="${escapeHTML(extra || field)}"`;
 }
+function formattedListDate() {
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${state.listDate}T12:00:00Z`));
+}
+function updateListDate() {
+  document.title = `INEXHO Mailing list - ${state.listDate}`;
+  $$("[data-list-date]").forEach((e) => (e.textContent = formattedListDate()));
+}
 function companyHeader() {
   const c = state.company;
-  return `<header class="company-header"><div class="brand-lockup"><img class="logo" src="assets/logo.png" alt="International Expats Houses"><div><h1 data-company ${edit("name", c.name)}>${escapeHTML(c.name)}</h1><p class="eyebrow">CORPORATE HOUSING</p></div></div><div class="company-contact">${["phone", "email"].map((f) => `<div class="contact-line"><span data-company ${edit(f, c[f])}>${escapeHTML(c[f])}</span><button class="copy editor-only" data-copy="${f}" aria-label="Copy ${f}" title="Copy ${f}"><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="6" y="6" width="10" height="11" rx="1"/><path d="M12 6V3H3v10h3"/></svg></button></div>`).join("")}</div><address class="company-address"><div data-company ${edit("street", c.street)}>${escapeHTML(c.street)}</div><div data-company ${edit("locality", c.locality)}>${escapeHTML(c.locality)}</div></address></header>`;
+  return `<header class="company-header"><div class="brand-lockup"><img class="logo" src="assets/logo.png" alt="International Expats Houses"><div><h1 data-company ${edit("name", c.name)}>${escapeHTML(c.name)}</h1><p class="eyebrow" data-company ${edit("subtitle", c.subtitle)}>${escapeHTML(c.subtitle)}</p><p class="list-date">Available accommodation list · <label class="list-date-picker"><span data-list-date>${formattedListDate()}</span><input class="editor-only" data-list-date-input type="date" aria-label="List publication date" value="${state.listDate}" min="0001-01-01" max="9999-12-31"></label></p></div></div><div class="company-contact"><h2 class="company-section-title">CONTACT</h2>${["phone", "email"].map((f) => `<div class="contact-line"><span data-company ${edit(f, c[f])}>${escapeHTML(c[f])}</span></div>`).join("")}</div><address class="company-address"><h2 class="company-section-title">ADDRESS</h2><div data-company ${edit("street", c.street)}>${escapeHTML(c.street)}</div><div data-company ${edit("locality", c.locality)}>${escapeHTML(c.locality)}</div></address></header>`;
 }
 function footer() {
-  return `<footer class="mailing-footer"><div><div class="summary"><div><strong data-total>${state.properties.length}</strong><span>available properties</span></div><div><strong><span data-capacity>${state.properties.reduce((sum, p) => sum + p.persons, 0)}</span> <small>persons</small></strong><span>maximum total capacity</span></div></div><p class="footer-note">Facilities may vary by property.<br>Availability subject to confirmation.</p></div><div class="features">${[
+  return `<footer class="mailing-footer"><div><div class="summary"><div><strong data-total>${state.properties.length}</strong><span>available properties</span></div><div><strong><span data-capacity>${state.properties.reduce((sum, p) => sum + p.persons, 0)}</span> <small>persons</small></strong><span>maximum total capacity</span></div></div><p class="footer-note">Heating included<br>Facilities may vary by property<br>Availability subject to confirmation</p></div><div class="features">${[
     ["bed", "Furnished"],
-    ["wifi", "Internet"],
-    ["shield", "SNF"],
+    ["kitchen", "Fully equipped kitchen"],
+    ["washing", "Washing machine"],
+    ["wifi", "Wi-Fi"],
     ["car", "Parking"],
+    ["shield", "SNF standards"],
   ]
-    .map(([name, label]) => `<div>${icon(name)}${label}</div>`)
+    .map(([name, label]) => `<div>${icon(name)}<span>${label}</span></div>`)
     .join("")}</div></footer>`;
 }
 function updateSummary() {
@@ -238,7 +249,7 @@ function card(p, index) {
     )
     .join(
       "",
-    )}<div class="fact">${icon("pin")}<span class="area" ${edit("area", p.area, "Area (optional)")}>${escapeHTML(p.area)}</span></div></div>${photo ? "" : badge(p)}</div>${photo ? gallery(p) : ""}${photo && p.photos.length < 3 ? '<div class="photo-controls editor-only"><button data-action="upload">+ Add photos</button></div>' : ""}</article>`;
+    )}<div class="fact">${icon("pin")}<span class="region">Region: <span class="area" ${edit("area", p.area, "Region")}>${escapeHTML(p.area)}</span></span></div></div>${photo ? "" : badge(p)}</div>${photo ? gallery(p) : ""}${photo && p.photos.length < 3 ? '<div class="photo-controls editor-only"><button data-action="upload">+ Add photos</button></div>' : ""}</article>`;
 }
 // All dimensions are defined in millimetres, independent of viewport and loaded images.
 function paginate(properties) {
@@ -281,6 +292,7 @@ function render(animateID) {
       URL.revokeObjectURL(url);
       urlCache.delete(id);
     }
+  updateListDate();
   $("#pages").innerHTML = paginate(state.properties)
     .map(
       (page) =>
@@ -333,6 +345,21 @@ function commitField(element, blur = false) {
     changed();
   }
 }
+$("#pages").addEventListener("change", (event) => {
+  if (!event.target.matches("[data-list-date-input]")) return;
+  const value = event.target.value;
+  if (!validDate(value) || value < "0001-01-01" || value > "9999-12-31") {
+    event.target.value = state.listDate;
+    return;
+  }
+  state.listDate = value;
+  updateListDate();
+  changed();
+});
+$("#pages").addEventListener("click", (event) => {
+  if (event.target.matches("[data-list-date-input]"))
+    event.target.showPicker?.();
+});
 $("#pages").addEventListener("input", (event) => {
   if (event.target.matches("[data-field]")) commitField(event.target);
 });
@@ -480,15 +507,6 @@ function showAvailability(cardElement, p) {
 $("#pages").addEventListener("click", async (event) => {
   const button = event.target.closest("button");
   if (!button) return;
-  if (button.dataset.copy) {
-    try {
-      await navigator.clipboard.writeText(state.company[button.dataset.copy]);
-      notify("Copied");
-    } catch {
-      notify("Copy unavailable here. Select the text to copy.");
-    }
-    return;
-  }
   const cardElement = button.closest("[data-id]"),
     p = property(cardElement?.dataset.id);
   if (!p) return;
@@ -794,8 +812,21 @@ async function init() {
       state = defaults();
       await queueSave();
     } else {
-      savedRevision = revision;
-      status("Saved ✓");
+      // Add only new fields; retain existing properties, photos and company edits.
+      let upgraded = false;
+      if (typeof state.company.subtitle !== "string") {
+        state.company.subtitle = "Short & long stay accommodation";
+        upgraded = true;
+      }
+      if (!validDate(state.listDate)) {
+        state.listDate = today();
+        upgraded = true;
+      }
+      if (upgraded) await queueSave();
+      else {
+        savedRevision = revision;
+        status("Saved ✓");
+      }
     }
   } catch (error) {
     state = state || defaults();

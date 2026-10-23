@@ -23,7 +23,9 @@ const server = http.createServer((req, res) => {
         ? "text/javascript"
         : file.endsWith(".css")
           ? "text/css"
-          : "text/html",
+          : file.endsWith(".png")
+            ? "image/png"
+            : "text/html",
     );
     res.end(data);
   });
@@ -51,6 +53,34 @@ const server = http.createServer((req, res) => {
     await saved();
     assert.equal(await page.locator(".property-card").count(), 6);
     assert.equal(await page.locator(".photo-card").count(), 3);
+    assert.match(await page.locator(".app-brand").textContent(), /INEXHO Mailing list/);
+    assert.equal(await page.locator(".toolbar input[type=date]").count(), 0);
+    assert.equal(await page.locator('[aria-label="List publication date"]').inputValue(), await page.evaluate(() => today()));
+    assert.equal(await page.locator('[data-field="subtitle"]').textContent(), "Short & long stay accommodation");
+    assert.deepEqual(await page.locator('[data-field="area"]').allTextContents(), ["South Holland", "South Holland", "North Holland", "North Holland", "North Holland", "North Holland"]);
+    assert.equal(await page.locator(".copy, [data-copy]").count(), 0);
+    assert.deepEqual(await page.locator(".company-section-title").allTextContents(), ["CONTACT", "ADDRESS"]);
+    assert.deepEqual(await page.locator(".features > div").allTextContents(), ["Furnished", "Fully equipped kitchen", "Washing machine", "Wi-Fi", "Parking", "SNF standards"]);
+    assert.equal(await page.locator(".fact .icon path").first().getAttribute("d"), await page.locator(".features .icon path").first().getAttribute("d"));
+    assert.deepEqual(await page.locator(".compact-card").evaluateAll(cards => cards.map(c => getComputedStyle(c).backgroundColor)), ["rgb(255, 255, 255)", "rgb(233, 238, 241)", "rgb(0, 59, 92)"]);
+    await page.locator('[data-field="subtitle"]').fill("Accommodation for your team");
+    await page.locator('[aria-label="List publication date"]').fill("2026-10-23");
+    await page.locator('[aria-label="List publication date"]').blur();
+    await saved();
+    await page.reload();
+    await saved();
+    assert.equal(await page.locator('[data-field="subtitle"]').textContent(), "Accommodation for your team");
+    assert.equal(await page.locator('[aria-label="List publication date"]').inputValue(), "2026-10-23");
+    assert.equal(await page.locator("[data-list-date]").textContent(), "23 Oct 2026");
+    assert.equal(await page.title(), "INEXHO Mailing list - 2026-10-23");
+    assert.match(await page.locator(".badge").first().textContent(), /Available now/);
+    // Both browser printing and the export button refresh the filename hint.
+    await page.evaluate(() => { document.title = "stale"; window.dispatchEvent(new Event("beforeprint")); });
+    assert.equal(await page.title(), "INEXHO Mailing list - 2026-10-23");
+    await page.evaluate(() => { window.originalPrint = window.print; window.print = () => { window.printTitle = document.title; }; document.title = "stale"; });
+    await page.locator("#export").click();
+    await page.waitForFunction(() => window.printTitle === "INEXHO Mailing list - 2026-10-23");
+    await page.evaluate(() => { window.print = window.originalPrint; });
     const initialID = await page
       .locator(".property-card")
       .first()
@@ -101,6 +131,8 @@ const server = http.createServer((req, res) => {
     ]);
     await page.waitForSelector(".gallery.count-3");
     await saved();
+    // Upload runs a movement animation: measure the settled layout, not its transform.
+    await page.evaluate(async () => { await Promise.all(document.getAnimations().map(a => a.finished.catch(() => {}))); });
     assert.equal(
       await page.evaluate(() =>
         [...document.querySelectorAll(".property-card")].every((card) => {
@@ -154,6 +186,58 @@ const server = http.createServer((req, res) => {
     await page.reload();
     await saved();
     assert.equal(await page.locator(`[data-id="${initialID}"] img`).count(), 3);
+    // A pre-update document must retain all records, edits and image Blobs.
+    const legacyProperties = await page.evaluate(async () => {
+      state.properties[0].area = "Existing user region";
+      delete state.company.subtitle;
+      delete state.listDate;
+      await queueSave();
+      return state.properties.map(p => ({ id: p.id, city: p.city, area: p.area, photos: p.photos.map(x => x.id) }));
+    });
+    await page.reload();
+    await saved();
+    assert.deepEqual(await page.evaluate(() => state.properties.map(p => ({ id: p.id, city: p.city, area: p.area, photos: p.photos.map(x => x.id) }))), legacyProperties);
+    assert.equal(await page.locator('[data-field="subtitle"]').textContent(), "Short & long stay accommodation");
+    assert.equal(await page.locator('[aria-label="List publication date"]').inputValue(), await page.evaluate(() => today()));
+    assert.equal(await page.evaluate(async () => (await readState()).company.subtitle), "Short & long stay accommodation");
+    assert.equal(await page.locator(`[data-id="${initialID}"] img`).count(), 3);
+    await page.locator('[aria-label="List publication date"]').fill("2027-02-14");
+    await saved();
+    await page.reload();
+    await saved();
+    assert.equal(await page.locator("[data-list-date]").textContent(), "14 Feb 2027");
+    assert.equal(await page.title(), "INEXHO Mailing list - 2027-02-14");
+    await page.emulateMedia({ media: "print" });
+    await page.evaluate(async () => {
+      await Promise.all([...document.querySelectorAll("#pages img")].map(img => img.decode()));
+      const box = selector => document.querySelector(selector).getBoundingClientRect();
+      if (Math.abs(box(".company-header").height - 36 * 96 / 25.4) > 1) throw Error("Header height changed");
+      if (Math.abs(box(".mailing-footer").height - 28 * 96 / 25.4) > 1) throw Error("Footer height changed");
+      for (const img of document.querySelectorAll(".app-mark, .logo")) {
+        const css = getComputedStyle(img);
+        if (css.backgroundColor !== "rgba(0, 0, 0, 0)" || css.borderWidth !== "0px" || css.objectFit !== "contain") throw Error("Logo frame or distortion");
+      }
+      for (const [container, children] of [[".company-header", ".brand-lockup, .company-contact, .company-address, .brand-lockup > div"], [".mailing-footer", ".summary, .footer-note, .features > div"]]) {
+        const bounds = box(container);
+        for (const child of document.querySelectorAll(children)) {
+          const r = child.getBoundingClientRect();
+          if (r.top < bounds.top - 1 || r.bottom > bounds.bottom + 1 || r.left < bounds.left - 1 || r.right > bounds.right + 1 || child.scrollWidth > child.clientWidth + 1) throw Error("Header/footer content overflow: " + child.className);
+        }
+      }
+      const headerItems = [".logo", ".brand-lockup > div", ".company-contact", ".company-address"].map(box);
+      for (let i = 1; i < headerItems.length; i++) if (headerItems[i].left < headerItems[i-1].right) throw Error("Header columns overlap");
+      for (const card of document.querySelectorAll(".property-card")) {
+        const facts = card.querySelectorAll(".fact");
+        if (facts[1].getBoundingClientRect().top < facts[0].getBoundingClientRect().bottom) throw Error("Bedrooms/persons share a row");
+      }
+      for (const img of document.querySelectorAll(".photo img")) {
+        if (!img.complete || !img.naturalWidth || img.getBoundingClientRect().height <= 0) throw Error("Missing print photo");
+      }
+      if (getComputedStyle(document.querySelector('[aria-label="List publication date"]')).display !== "none") throw Error("Date input printed");
+    });
+    await page.screenshot({path: path.join(out, "updated-print.png"), fullPage: true});
+    await page.pdf({path: path.join(out, "updated-a4.pdf"), preferCSSPageSize: true, printBackground: true});
+    await page.emulateMedia({ media: "screen" });
     await page.locator(".badge").first().click();
     await page.selectOption('[aria-label="Availability mode"]', "date");
     await page.fill('[aria-label="Available date"]', "2026-12-15");
@@ -271,9 +355,22 @@ const server = http.createServer((req, res) => {
       ),
       desktopRects,
     );
+    // The default is a local calendar date, including across the UTC boundary.
+    const localPage = await browser.newPage({ timezoneId: "Pacific/Kiritimati" });
+    await localPage.clock.install({ time: new Date("2026-10-23T12:30:00Z") });
+    await localPage.goto(`http://127.0.0.1:${server.address().port}/`);
+    await localPage.waitForFunction(() => document.querySelector("#save-status").textContent === "Saved ✓");
+    assert.equal(await localPage.locator('[aria-label="List publication date"]').inputValue(), "2026-10-24");
+    await localPage.locator('[data-field="subtitle"]').fill("");
+    await localPage.locator('[data-field="subtitle"]').blur();
+    await localPage.waitForFunction(() => document.querySelector("#save-status").textContent === "Saved ✓");
+    await localPage.reload();
+    await localPage.waitForFunction(() => document.querySelector("#save-status").textContent === "Saved ✓");
+    assert.equal(await localPage.locator('[data-field="subtitle"]').textContent(), "");
+    await localPage.close();
     assert.deepEqual(errors, []);
     console.log(
-      "PASS: autosave/reload, Blob optimization, pointer/keyboard sorting, date formatting, text safety, reset, empty state, 0–100 pagination, mobile layout and PDF generation.",
+      "PASS: autosave/reload, Blob optimization, pointer/keyboard sorting, date formatting, text safety, reset, empty state, 0–100 pagination, mobile layout and PDF generation; subtitle/list-date persistence, legacy migration with photos, print title, six shared-style features, three card colours and fixed header/footer bounds.",
     );
   } finally {
     await browser.close();
