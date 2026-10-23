@@ -1,100 +1,100 @@
 # INEXHO Mailing list
 
-Веб-редактор предложений недвижимости для **International Expats Houses**. Добавьте объекты, фотографии и даты доступности, затем сохраните готовый список в PDF формата A4. Отправить PDF клиенту можно привычным способом — например, вложением в письмо.
+A property availability editor for **International Expats Houses**. Add properties, photos and availability dates, then save a professional A4 PDF. Share the finished document with clients using your preferred method, such as an email attachment.
 
-Для работы нужен только современный браузер. Регистрация и установка программ для редактирования не требуются.
+All you need to use the editor is a modern browser. No registration or additional editing software is required.
 
-## Быстрый старт
+## Quick start
 
-1. Откройте редактор в **Google Chrome** или **Microsoft Edge**.
-2. Замените примеры объектов своими данными и фотографиями.
-3. Проверьте контакты компании и дату списка.
-4. Дождитесь надписи **Saved ✓** в верхней панели.
-5. Нажмите **Export PDF**, проверьте предпросмотр и сохраните файл.
+1. Open the editor in **Google Chrome** or **Microsoft Edge**.
+2. Replace the example properties with your own details and photos.
+3. Check the company contact details and list date.
+4. Wait for **Saved ✓** in the toolbar.
+5. Click **Export PDF**, check the print preview and save the file.
 
-Если вы получили проект в архиве, сначала распакуйте его целиком, затем откройте `index.html`. Сохраняйте структуру папок: рядом должны оставаться скрипты, стили и папка `assets/`. Для надёжного сохранения изменений рекомендуется открывать редактор по одному и тому же веб-адресу; локальный запуск описан в разделе для разработчика.
+If you received the project as a ZIP archive, extract the entire archive before opening `index.html`. Keep the folder structure intact: the scripts, stylesheet and `assets/` folder must remain alongside the page. For reliable storage, use the editor at a consistent web address; local hosting instructions are provided in the developer section.
 
-## Как подготовить список
+## Preparing your list
 
-### Компания и дата публикации
+### Company details and publication date
 
-Нажмите на название компании, подзаголовок, телефон, email или адрес прямо в шапке, чтобы изменить текст.
+Click the company name, subtitle, phone number, email or address directly in the banner to edit the text.
 
-Нажмите на подчёркнутую дату рядом с **List date** и выберите день в календаре. Это дата публикации всего списка. Доступность каждого объекта задаётся отдельно.
+Click the underlined date next to **List date** to choose a date from the calendar. This is the publication date of the whole list. Each property's availability is set separately.
 
-### Объекты недвижимости
+### Properties
 
-| Что нужно сделать | Как это сделать |
+| Task | How to do it |
 | --- | --- |
-| Изменить город или тип жилья | Нажмите на соответствующий текст в карточке. |
-| Указать регион | Нажмите на поле рядом со значком местоположения. Например: `North Holland`. |
-| Изменить число спален или человек | Введите число в поле или используйте стрелки рядом с ним. Допустимы целые числа от 0 до 9999. |
-| Указать доступность | Нажмите **Available now**, оставьте текущую доступность или выберите дату. |
-| Добавить объект | Нажмите **+ Add property** в верхней панели. |
-| Поменять порядок объектов | Перетащите карточку за значок захвата над ней. Можно также выделить захват и использовать клавиши со стрелками. |
-| Удалить объект | Нажмите **×** над карточкой и подтвердите удаление. |
+| Edit a city or property type | Click the corresponding text in the card. |
+| Set a region | Click the field next to the location icon. For example: `North Holland`. |
+| Change bedrooms or capacity | Type a number or use the arrows beside it. Values must be whole numbers from 0 to 9999. |
+| Set availability | Click **Available now**, keep that option or choose a specific date. |
+| Add a property | Click **+ Add property** in the toolbar. |
+| Reorder properties | Drag a card using the grip above it. You can also focus the grip and use the arrow keys. |
+| Remove a property | Click **×** above the card and confirm removal. |
 
-Первые **три** объекта показываются с фотографиями, остальные — компактными карточками. Если переместить объект ниже третьей позиции, его фотографии скроются, но сохранятся. Верните объект в первые три позиции, чтобы снова показать их.
+The first **three** properties display photos; the remaining properties use compact cards. Moving a property below the third position hides its photos without deleting them. Move it back into the first three positions to show them again.
 
-### Фотографии
+### Photos
 
-- Нажмите **+ Add photos** на одной из первых трёх карточек. На объект можно добавить до **трёх** фотографий в формате JPG, PNG или WebP.
-- Перетащите фотографию за её значок захвата, чтобы изменить порядок. Первая фотография будет основной. Управление клавишами со стрелками тоже поддерживается.
-- Нажмите **×** на фотографии, чтобы удалить только её.
+- Click **+ Add photos** on one of the first three cards. Each property can contain up to **three** photos in JPG, PNG or WebP format.
+- Drag a photo using its grip to change the order. The first photo is the main image. Arrow-key controls are also supported.
+- Click **×** on a photo to remove that photo only.
 
-Редактор уменьшает и сжимает фотографии для PDF. Исходные файлы на вашем устройстве не изменяются. Дождитесь окончания обработки перед закрытием страницы.
+The editor resizes and compresses photos for the PDF. Original files on your device remain unchanged. Wait for processing to finish before closing the page.
 
-Количество объектов и **total capacity** — их суммарная вместимость — пересчитываются автоматически. Перед отправкой проверьте фактическую доступность объектов и соответствие указанных удобств.
+The property count and **total capacity**, the combined number of people the properties can accommodate, update automatically. Before sharing the list, confirm actual property availability and the facilities provided.
 
-## Как сохранить PDF
+## Saving a PDF
 
-Нажмите **Export PDF** или используйте **Ctrl+P**; на Mac — **⌘+P**. В окне печати выберите:
+Click **Export PDF** or press **Ctrl+P**; on Mac, use **⌘+P**. In the print dialog, select:
 
-| Настройка | Значение |
+| Setting | Value |
 | --- | --- |
-| Принтер / назначение | Сохранить как PDF / Save as PDF |
-| Бумага | A4 |
-| Ориентация | Книжная / Portrait |
-| Масштаб | 100% |
-| Поля | Нет / None — отступы уже заданы в документе |
-| Фоновая графика | Включена |
-| Колонтитулы браузера | Выключены |
+| Printer / destination | Save as PDF |
+| Paper size | A4 |
+| Orientation | Portrait |
+| Scale | 100% |
+| Margins | None — the document already includes its own spacing |
+| Background graphics | On |
+| Browser headers and footers | Off |
 
-Проверьте предпросмотр и нажмите **Сохранить**. Редактор предлагает имя по выбранной дате списка, например `INEXHO Mailing list - 2026-10-24.pdf`. Окончательное имя можно изменить в окне сохранения.
+Check the preview, then click **Save**. The editor suggests a filename based on the selected list date, such as `INEXHO Mailing list - 2026-10-24.pdf`. You can change the final filename in the save dialog.
 
-PDF использует три колонки на листе A4. Шапка компании появляется в начале списка, итоги и удобства — в конце. Карточки распределяются по страницам автоматически. На телефоне редактор перестраивается для удобства работы, а формат PDF остаётся прежним.
+The PDF uses three columns on A4 pages. The company banner appears at the start, with totals and facilities at the end. Cards are distributed across pages automatically. The editor adapts to phone screens while keeping the printed PDF layout consistent.
 
-## Сохранение данных
+## How your data is saved
 
-Изменения сохраняются автоматически **в текущем браузере на текущем устройстве**. Надпись **Saved ✓** подтверждает завершённое сохранение. Пока отображается **Saving…** или **Processing…**, оставьте страницу открытой.
+Changes save automatically **in the current browser on the current device**. **Saved ✓** confirms that saving has finished. Keep the page open while **Saving…** or **Processing…** is displayed.
 
-- Возвращайтесь к тому же адресу в том же браузере. Другой адрес или порт локального сервера использует отдельное хранилище.
-- Данные не синхронизируются между устройствами. Очистка данных сайта удаляет сохранённый список; приватный режим может удалить его при закрытии браузера.
-- При работе через `file://` сохранение зависит от браузера. Если оно недоступно, используйте редактор по HTTP/HTTPS.
-- Если появилось сообщение об ошибке сохранения, не закрывайте страницу: сначала сохраните нужный результат в PDF.
-- **Reset** после подтверждения сбрасывает весь документ: объекты, фотографии, реквизиты компании и дату списка. Возвращаются исходные настройки и шесть примеров. Отмены этого действия нет.
+- Return to the same address in the same browser. A different address or local server port uses separate storage.
+- Data does not sync between devices. Clearing site data removes the saved list; private browsing may discard it when the browser closes.
+- Storage behaviour varies when opening the page through `file://`. If saving is unavailable, use the editor over HTTP/HTTPS.
+- If a storage error appears, keep the page open and save the current result as a PDF first.
+- After confirmation, **Reset** clears the entire document, including properties, photos, company details and the list date. It restores the default settings and six example properties. This action cannot be undone.
 
-PDF — готовый документ для клиента. Загрузить его обратно в редактор для продолжения работы нельзя. Не редактируйте один список одновременно в нескольких вкладках.
+A PDF is the finished document for your client. It cannot be loaded back into the editor to continue editing. Avoid editing the same list in multiple tabs at once.
 
-## Для разработчика
+## For developers
 
-### Технологии и структура
+### Technology and project structure
 
-Проект написан на HTML, CSS и JavaScript. Для самого приложения не нужны сборка, серверная часть, база данных на сервере или npm-пакеты. Playwright используется только для тестирования.
+The application uses HTML, CSS and JavaScript. It requires no build step, backend, server database or runtime npm packages. Playwright is used only for testing.
 
 ```text
-index.html       Страница и панель инструментов
-app.js           Редактирование, автосохранение, фотографии и пагинация
-styles.css       Интерфейс, адаптивная вёрстка и печатные стили A4
-icons.js         Общие SVG-иконки карточек и футера
-assets/          Логотип меню (logo-blue.png), логотип листа (logo.png), favicon
-tests/editor.cjs Браузерные тесты Playwright
-README.md        Инструкция пользователя и разработчика
+index.html       Page structure and toolbar
+app.js           Editing, autosave, photos and pagination
+styles.css       Interface, responsive layout and A4 print styles
+icons.js         Shared SVG icons for property cards and the footer
+assets/          Toolbar logo (logo-blue.png), document logo (logo.png), favicon
+tests/editor.cjs Playwright browser tests
+README.md        User and developer guide
 ```
 
-### Локальный запуск
+### Running locally
 
-Для разработки используйте ветку **`dev`**. Потребуются Git и Python 3; для тестов — Node.js и npm.
+Use the **`dev`** branch for development. You will need Git and Python 3; tests also require Node.js and npm.
 
 ```bash
 git clone --branch dev https://github.com/WinslayS/inexho-mailing.git
@@ -102,13 +102,13 @@ cd inexho-mailing
 python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
-Откройте `http://127.0.0.1:8000` в браузере. Чтобы остановить сервер, нажмите **Ctrl+C** в терминале. В Windows вместо `python3` можно использовать `py -3`.
+Open `http://127.0.0.1:8000` in your browser. Press **Ctrl+C** in the terminal to stop the server. On Windows, you can use `py -3` instead of `python3`.
 
-Сервер только раздаёт статические файлы. Изменения HTML, CSS и JavaScript доступны после обновления страницы; отдельной сборки нет. Используйте постоянный адрес и порт, чтобы сохранялся доступ к прежним данным браузера.
+The server only serves static files. Refresh the page after changing HTML, CSS or JavaScript; no build is needed. Keep the address and port consistent to retain access to the same browser data.
 
-### Проверка изменений
+### Running tests
 
-В корне проекта выполните:
+From the project root, run:
 
 ```bash
 npm install
@@ -116,30 +116,30 @@ npx playwright install chromium
 npm test
 ```
 
-Если Chromium уже установлен, тесты могут использовать его исполняемый файл. Например, в Linux:
+If Chromium is already installed, the tests can use its executable. For example, on Linux:
 
 ```bash
 BROWSER_EXECUTABLE_PATH=/usr/bin/chromium npm test
 ```
 
-Тесты проверяют редактирование и автосохранение, старые сохранённые документы, даты, обработку и порядок фотографий, сортировку объектов, числовые поля и стрелки, темы карточек, пагинацию для 0–100 объектов, мобильную вёрстку и создание PDF. Скриншоты и PDF текущего запуска сохраняются в `test-results/`; эта папка исключена из Git.
+Tests cover editing and autosave, older saved documents, dates, photo processing and ordering, property sorting, numeric fields and step controls, card themes, pagination for 0–100 properties, mobile layout and PDF generation. Screenshots and PDFs from the current run are saved in `test-results/`, which is excluded from Git.
 
-### Что учитывать при разработке
+### Development notes
 
-- Состояние хранится в IndexedDB: база `inexho-mailing`, хранилище `documents`, запись `current`. Фотографии сохраняются как Blob вместе с документом.
-- При добавлении полей задавайте значения по умолчанию для старых документов. Обновление приложения не должно очищать пользовательские данные.
-- Ключ поля региона — `area`; он сохранён для совместимости с существующими документами.
-- Фотографии обрабатываются в браузере: до 1400 пикселей по длинной стороне с сохранением в JPEG. Размеры и порядок оригинальных файлов на устройстве пользователя не меняются.
-- Тип карточки зависит от её позиции: первые три — с фотографиями, последующие — компактные. Цвета компактных карточек задаёт `compactPattern`.
-- Печатный лист — **210 × 297 мм**, внутренние отступы — **10 мм**. Высоты шапки, карточек и футера согласованы между `mm` в `app.js` и CSS. Проверяйте их совместно при изменении вёрстки.
-- После визуальных изменений проверяйте PDF и мобильный экран. Особое внимание — длинному тексту, фотографиям, целостности карточек и отсутствию лишних страниц.
+- State is stored in IndexedDB: database `inexho-mailing`, object store `documents`, key `current`. Photos are stored as Blobs with the document.
+- When adding fields, provide defaults for older documents. Application updates must preserve existing user data.
+- The region field retains the key `area` for compatibility with existing documents.
+- Photos are processed in the browser, resized to a maximum of 1400 pixels on the long side and saved as JPEGs. Original files on the user's device remain unchanged.
+- Card appearance depends on position: the first three show photos, and later positions use compact cards. `compactPattern` controls compact-card colours.
+- Printed pages measure **210 × 297 mm**, with **10 mm** internal padding. Header, card and footer heights are coordinated between `mm` in `app.js` and the CSS. Check both when changing the layout.
+- After visual changes, check the PDF and mobile layout. Pay particular attention to long text, photos, complete cards and unexpected extra pages.
 
-## Если что-то пошло не так
+## Troubleshooting
 
-| Проблема | Что проверить |
+| Problem | What to check |
 | --- | --- |
-| Изменения не появились при повторном открытии | Тот ли браузер, профиль, адрес и порт? Не очищались ли данные сайта? |
-| Фото исчезло из карточки | Находится ли объект среди первых трёх? При перемещении ниже фото скрываются, но не удаляются. |
-| В PDF нет цветов фона | Включена ли фоновая графика в настройках печати? |
-| В PDF появился адрес сайта или лишние поля | Выключите колонтитулы браузера, проверьте A4, масштаб 100% и поля «Нет». |
-| Редактор сообщает об ошибке сохранения | Проверьте разрешение браузера на хранение данных и свободное место. Сохраните PDF до закрытия страницы. |
+| Changes are missing when reopening the editor | Are you using the same browser, profile, address and port? Has site data been cleared? |
+| A photo has disappeared from a card | Is the property among the first three? Photos are hidden, not deleted, when a property moves below the third position. |
+| Background colours are missing from the PDF | Enable background graphics in the print settings. |
+| The PDF includes a website address or extra margins | Disable browser headers and footers. Check A4 paper, 100% scale and margins set to None. |
+| The editor reports a storage error | Check the browser's permission to store site data and available disk space. Save a PDF before closing the page. |
