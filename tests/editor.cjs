@@ -59,6 +59,20 @@ const server = http.createServer((req, res) => {
     assert.equal(await page.locator('[data-field="subtitle"]').textContent(), "Short & long stay accommodation");
     assert.deepEqual(await page.locator('[data-field="area"]').allTextContents(), ["South Holland", "South Holland", "North Holland", "North Holland", "North Holland", "North Holland"]);
     assert.equal(await page.locator(".copy, [data-copy]").count(), 0);
+    assert.doesNotMatch(await page.locator(".facts").first().textContent(), /Region:/);
+    assert.doesNotMatch(await page.locator(".footer-note").textContent(), /Heating included/);
+    assert.match(await page.locator(".list-date").textContent(), /List date/);
+    assert.equal(await page.locator(".date-edit-hint").textContent(), "Edit");
+    const numberField = page.locator('[data-field="bedrooms"]').first();
+    const singleDigitWidth = await numberField.evaluate(e => e.getBoundingClientRect().width);
+    await numberField.fill("12");
+    const doubleDigitWidth = await numberField.evaluate(e => e.getBoundingClientRect().width);
+    assert(doubleDigitWidth > singleDigitWidth && doubleDigitWidth < singleDigitWidth * 2.1);
+    await numberField.fill("9999");
+    assert((await numberField.evaluate(e => e.getBoundingClientRect().width)) > doubleDigitWidth);
+    await numberField.fill("4");
+    await numberField.blur();
+    assert.equal(await numberField.evaluate(e => e.getBoundingClientRect().width), singleDigitWidth);
     assert.deepEqual(await page.locator(".company-section-title").allTextContents(), ["CONTACT", "ADDRESS"]);
     assert.deepEqual(await page.locator(".features > div").allTextContents(), ["Furnished", "Fully equipped kitchen", "Washing machine", "Wi-Fi", "Parking", "SNF standards"]);
     assert.equal(await page.locator(".fact .icon path").first().getAttribute("d"), await page.locator(".features .icon path").first().getAttribute("d"));
@@ -224,7 +238,9 @@ const server = http.createServer((req, res) => {
           if (r.top < bounds.top - 1 || r.bottom > bounds.bottom + 1 || r.left < bounds.left - 1 || r.right > bounds.right + 1 || child.scrollWidth > child.clientWidth + 1) throw Error("Header/footer content overflow: " + child.className);
         }
       }
-      const headerItems = [".logo", ".brand-lockup > div", ".company-contact", ".company-address"].map(box);
+      if (getComputedStyle(document.querySelector(".date-edit-hint")).display !== "none") throw Error("Date edit hint printed");
+      if (document.querySelector(".logo").getBoundingClientRect().width !== 96 || document.querySelector(".company-logo").getBoundingClientRect().width !== 72) throw Error("Logo size or layout slot changed");
+      const headerItems = [".company-logo", ".brand-lockup > div", ".company-contact", ".company-address"].map(box);
       for (let i = 1; i < headerItems.length; i++) if (headerItems[i].left < headerItems[i-1].right) throw Error("Header columns overlap");
       for (const card of document.querySelectorAll(".property-card")) {
         const facts = card.querySelectorAll(".fact");

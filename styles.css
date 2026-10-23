@@ -185,9 +185,17 @@ select:focus-visible,
   align-items: center;
   gap: 11px;
 }
-.logo {
+.company-logo {
   width: 72px;
   height: 72px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo {
+  width: 96px;
+  height: 96px;
   flex-shrink: 0;
   object-fit: contain;
   background: transparent;
@@ -216,6 +224,17 @@ select:focus-visible,
   position: relative;
   display: inline-block;
   white-space: nowrap;
+}
+.date-edit-hint {
+  margin-left: 5px;
+  color: var(--cyan);
+}
+@media screen {
+  .list-date-picker {
+    text-decoration: underline dashed #b6d8e7;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
 }
 .list-date-picker input {
   position: absolute;
@@ -334,16 +353,12 @@ select:focus-visible,
 }
 .number-input:hover,
 .number-input:focus {
-  appearance: auto;
-  -moz-appearance: auto;
   border-color: #83bdcc;
 }
-.number-input::-webkit-inner-spin-button {
-  opacity: 0;
-}
-.number-input:focus::-webkit-inner-spin-button,
-.number-input:hover::-webkit-inner-spin-button {
-  opacity: 1;
+.number-input::-webkit-inner-spin-button,
+.number-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 .number-print {
   display: none;
@@ -1197,7 +1212,9 @@ dialog p {
   }
 }
 .number-input {
-  width: 43px;
+  width: calc(var(--digits, 1) * 1ch + 1px);
+  min-width: 1ch;
+  font-variant-numeric: tabular-nums;
 }
 /* Keep upload controls above the card, clear of photo sort/remove handles. */
 .photo-controls {

@@ -202,10 +202,10 @@ function updateListDate() {
 }
 function companyHeader() {
   const c = state.company;
-  return `<header class="company-header"><div class="brand-lockup"><img class="logo" src="assets/logo.png" alt="International Expats Houses"><div><h1 data-company ${edit("name", c.name)}>${escapeHTML(c.name)}</h1><p class="eyebrow" data-company ${edit("subtitle", c.subtitle)}>${escapeHTML(c.subtitle)}</p><p class="list-date">Available accommodation list · <label class="list-date-picker"><span data-list-date>${formattedListDate()}</span><input class="editor-only" data-list-date-input type="date" aria-label="List publication date" value="${state.listDate}" min="0001-01-01" max="9999-12-31"></label></p></div></div><div class="company-contact"><h2 class="company-section-title">CONTACT</h2>${["phone", "email"].map((f) => `<div class="contact-line"><span data-company ${edit(f, c[f])}>${escapeHTML(c[f])}</span></div>`).join("")}</div><address class="company-address"><h2 class="company-section-title">ADDRESS</h2><div data-company ${edit("street", c.street)}>${escapeHTML(c.street)}</div><div data-company ${edit("locality", c.locality)}>${escapeHTML(c.locality)}</div></address></header>`;
+  return `<header class="company-header"><div class="brand-lockup"><span class="company-logo"><img class="logo" src="assets/logo.png" alt="International Expats Houses"></span><div><h1 data-company ${edit("name", c.name)}>${escapeHTML(c.name)}</h1><p class="eyebrow" data-company ${edit("subtitle", c.subtitle)}>${escapeHTML(c.subtitle)}</p><p class="list-date">List date · <label class="list-date-picker" title="Change list date"><span data-list-date>${formattedListDate()}</span><span class="date-edit-hint editor-only">Edit</span><input class="editor-only" data-list-date-input type="date" aria-label="List publication date" value="${state.listDate}" min="0001-01-01" max="9999-12-31"></label></p></div></div><div class="company-contact"><h2 class="company-section-title">CONTACT</h2>${["phone", "email"].map((f) => `<div class="contact-line"><span data-company ${edit(f, c[f])}>${escapeHTML(c[f])}</span></div>`).join("")}</div><address class="company-address"><h2 class="company-section-title">ADDRESS</h2><div data-company ${edit("street", c.street)}>${escapeHTML(c.street)}</div><div data-company ${edit("locality", c.locality)}>${escapeHTML(c.locality)}</div></address></header>`;
 }
 function footer() {
-  return `<footer class="mailing-footer"><div><div class="summary"><div><strong data-total>${state.properties.length}</strong><span>available properties</span></div><div><strong><span data-capacity>${state.properties.reduce((sum, p) => sum + p.persons, 0)}</span> <small>persons</small></strong><span>maximum total capacity</span></div></div><p class="footer-note">Heating included<br>Facilities may vary by property<br>Availability subject to confirmation</p></div><div class="features">${[
+  return `<footer class="mailing-footer"><div><div class="summary"><div><strong data-total>${state.properties.length}</strong><span>available properties</span></div><div><strong><span data-capacity>${state.properties.reduce((sum, p) => sum + p.persons, 0)}</span> <small>persons</small></strong><span>maximum total capacity</span></div></div><p class="footer-note">Facilities may vary by property<br>Availability subject to confirmation</p></div><div class="features">${[
     ["bed", "Furnished"],
     ["kitchen", "Fully equipped kitchen"],
     ["washing", "Washing machine"],
@@ -245,11 +245,11 @@ function card(p, index) {
   ]
     .map(
       ([name, f]) =>
-        `<div class="fact">${icon(name)}<span><input class="number-input" type="number" min="0" max="9999" step="1" inputmode="numeric" data-field="${f}" aria-label="${f}" value="${p[f]}"><span class="number-print">${p[f]}</span> ${f}</span></div>`,
+        `<div class="fact">${icon(name)}<span><input class="number-input" style="--digits:${String(p[f]).length}" type="number" min="0" max="9999" step="1" inputmode="numeric" data-field="${f}" aria-label="${f}" value="${p[f]}"><span class="number-print">${p[f]}</span> ${f}</span></div>`,
     )
     .join(
       "",
-    )}<div class="fact">${icon("pin")}<span class="region">Region: <span class="area" ${edit("area", p.area, "Region")}>${escapeHTML(p.area)}</span></span></div></div>${photo ? "" : badge(p)}</div>${photo ? gallery(p) : ""}${photo && p.photos.length < 3 ? '<div class="photo-controls editor-only"><button data-action="upload">+ Add photos</button></div>' : ""}</article>`;
+    )}<div class="fact">${icon("pin")}<span class="area" ${edit("area", p.area, "e.g. North Holland")}>${escapeHTML(p.area)}</span></div></div>${photo ? "" : badge(p)}</div>${photo ? gallery(p) : ""}${photo && p.photos.length < 3 ? '<div class="photo-controls editor-only"><button data-action="upload">+ Add photos</button></div>' : ""}</article>`;
 }
 // All dimensions are defined in millimetres, independent of viewport and loaded images.
 function paginate(properties) {
@@ -321,6 +321,7 @@ function commitField(element, blur = false) {
       ? Math.min(9999, Math.max(0, Math.floor(parsed)))
       : 0;
     if (blur) element.value = value;
+    element.style.setProperty("--digits", Math.max(1, element.value.length));
     element.nextElementSibling.textContent = value;
   } else {
     value = cleanText(element.textContent, field);
