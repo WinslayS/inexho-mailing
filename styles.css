@@ -225,10 +225,6 @@ select:focus-visible,
   display: inline-block;
   white-space: nowrap;
 }
-.date-edit-hint {
-  margin-left: 5px;
-  color: var(--cyan);
-}
 @media screen {
   .list-date-picker {
     text-decoration: underline dashed #b6d8e7;
@@ -355,10 +351,12 @@ select:focus-visible,
 .number-input:focus {
   border-color: #83bdcc;
 }
-.number-input::-webkit-inner-spin-button,
-.number-input::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+.number-input::-webkit-inner-spin-button {
+  opacity: 0;
+}
+.number-input:focus::-webkit-inner-spin-button,
+.number-input:hover::-webkit-inner-spin-button {
+  opacity: 1;
 }
 .number-print {
   display: none;
@@ -1215,6 +1213,12 @@ dialog p {
   width: calc(var(--digits, 1) * 1ch + 1px);
   min-width: 1ch;
   font-variant-numeric: tabular-nums;
+}
+.number-input:hover,
+.number-input:focus {
+  appearance: auto;
+  -moz-appearance: auto;
+  width: calc(var(--digits, 1) * 1ch + 18px);
 }
 /* Keep upload controls above the card, clear of photo sort/remove handles. */
 .photo-controls {
